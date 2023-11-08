@@ -3,15 +3,14 @@ const cors = require('cors');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
-const port = process.env.PORT || 52;
+const port = process.env.PORT || 501;
 
 // middleware
 app.use(cors());
-app.use(express());
+app.use(express.json());
 
 
-console.log(process.env.DB_USER)
-console.log(process.env.DB_PASSWORD)
+
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.it2xzvi.mongodb.net/?retryWrites=true&w=majority`;
@@ -29,10 +28,14 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+const addBlogCollection = client.db('addBlogDB').collection('addBlog')
+
+
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-
-
 
     
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -48,6 +51,22 @@ app.get('/', (req, res) => {
     res.send('assignment eleven is running')
 })
 
+
+
+
+app.post('/addblog', async(req, res) => {
+    console.log('hello')
+    const newBlog = req.body;
+    console.log(newBlog);
+    const result = await addBlogCollection.insertOne(newBlog)
+    res.send(result);
+})
+
+
+
+
+
 app.listen(port, ()=>{
     console.log(`assignment server is running on port:${port}`)
 })
+
